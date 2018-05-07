@@ -1,17 +1,14 @@
-[![Docker Build Status](https://img.shields.io/docker/build/micahhausler/k8s-oidc-helper.svg)](https://hub.docker.com/r/micahhausler/k8s-oidc-helper/)
-[![Build Status](https://travis-ci.org/micahhausler/k8s-oidc-helper.svg?branch=master)](https://travis-ci.org/micahhausler/k8s-oidc-helper)
-
 # k8s-oidc-helper
 
 This is a small helper tool to get a user get authenticated with
-[Kubernetes OIDC](http://kubernetes.io/docs/admin/authentication/) using Google
+[Kubernetes OIDC](http://kubernetes.io/docs/admin/authentication/) using Any OpenID Connect Provider
 as the Identity Provider.
 
-Given a ClientID and ClientSecret, the tool will output the necessary
+Given a ClientID, ClientSecret and Issuer URL, the tool will output the necessary
 configuration for `kubectl` that you can add to `~/.kube/config`
 
 ```
-$ k8s-oidc-helper -c ./client_secret.json
+$ k8s-oidc-helper -c ./client_secret.json   # Out of the Box Support for Google;s JSON File
 Enter the code Google gave you: <code>
 
 # Add the following to your ~/.kube/config
@@ -92,7 +89,7 @@ roleRef:
 ## Installation
 
 ```
-go get github.com/micahhausler/k8s-oidc-helper
+go get github.com/tink-ab/k8s-oidc-helper
 ```
 
 ## Usage
@@ -101,9 +98,13 @@ go get github.com/micahhausler/k8s-oidc-helper
 Usage of k8s-oidc-helper:
       --client-id string       The ClientID for the application
       --client-secret string   The ClientSecret for the application
-  -c, --config string          Path to a json file containing your application's ClientID and ClientSecret. Supercedes the --client-id and --client-secret flags.
+  -c, --config string          Path to a json file containing your Google application's ClientID and ClientSecret. Supercedes the --client-id and --client-secret flags.
       --file ~/.kube/config    The file to write to. If not specified, ~/.kube/config is used
+      --issuer-url string      OIDC Discovery URL, such that <URL>/.well-known/openid-configuration can be fetched
   -o, --open                   Open the oauth approval URL in the browser (default true)
+      --redirect-uri string    URI to redirect to. Set to urn:ietf:wg:oauth:2.0:oob to use in-browser copy-paste method. (default "http://localhost")
+      --scopes string          Required scopes to be passed to the Authicator. offline_access is added if access_type parameter is not supported by authorizer (default "openid email")
+      --user-claim string      The Claim in ID-Token used to identify the user. One of sub/email/name (default "email")
   -v, --version                Print version and exit
   -w, --write                  Write config to file. Merges in the specified file
 ```
