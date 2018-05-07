@@ -11,9 +11,9 @@ import (
 	"strings"
 
 	"github.com/ghodss/yaml"
-	"github.com/micahhausler/k8s-oidc-helper/internal/helper"
 	flag "github.com/spf13/pflag"
 	viper "github.com/spf13/viper"
+	"github.com/tink-ab/k8s-oidc-helper/internal/helper"
 	k8s_runtime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
