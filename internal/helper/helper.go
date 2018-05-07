@@ -128,7 +128,7 @@ func GetUserClaim(ds DiscoverySpec, accessToken, userClaim string) (string, erro
 	case "name":
 		retVal = ui.Name
 	default:
-		return "", errors.New("User Claim needs to be on of sub/name/email")
+		return "", errors.New("User Claim needs to be one of sub/name/email")
 	}
 
 	if retVal == "" {

@@ -32,7 +32,7 @@ func main() {
 	flag.String("file", "", "The file to write to. If not specified, `~/.kube/config` is used")
 	flag.String("issuer-url", "", "OIDC Discovery URL, such that <URL>/.well-known/openid-configuration can be fetched")
 	flag.String("scopes", "openid email", "Required scopes to be passed to the Authicator. offline_access is added if access_type parameter is not supported by authorizer")
-	flag.String("redirect_uri", "http://localhost", "http://localhost or urn:ietf:wg:oauth:2.0:oob if --config flag is used for google OpenID")
+	flag.String("redirect-uri", "http://localhost", "URI to redirect to. Set to urn:ietf:wg:oauth:2.0:oob to use in-browser copy-paste method.")
 	flag.String("user-claim", "email", "The Claim in ID-Token used to identify the user. One of sub/email/name")
 
 	viper.BindPFlags(flag.CommandLine)
@@ -81,13 +81,13 @@ func main() {
 
 	ds, err := helper.GetDiscoverySpec(issuerUrl)
 	if err != nil {
-		log.Fatalf("Can not get Discovery Spec, Please make sure that <URL>/.well-known/openid-configuration return OpenID JSON: %v", err)
+		log.Fatalf("Can not get Discovery Spec, Please make sure that <URL>/.well-known/openid-configuration returns valid OpenID JSON: %v", err)
 	}
 
 	helper.LaunchBrowser(viper.GetBool("open"), helper.ConstructAuthUrl(ds, viper.GetString("scopes"), redirectUri, clientID))
 
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter the code Provider gave you (On The page or the Value of `code` query parameter on localhost URL) : ")
+	fmt.Print("Enter the code the provider gave you: ")
 	code, _ := reader.ReadString('\n')
 	code = strings.TrimSpace(code)
 
@@ -113,12 +113,12 @@ func main() {
 
 		json, err := k8s_runtime.Encode(clientcmdlatest.Codec, config)
 		if err != nil {
-			fmt.Printf("Unexpected error: %v", err)
+			fmt.Printf("Unexpected error: %v\n", err)
 			os.Exit(1)
 		}
 		output, err := yaml.JSONToYAML(json)
 		if err != nil {
-			fmt.Printf("Unexpected error: %v", err)
+			fmt.Printf("Unexpected error: %v\n", err)
 			os.Exit(1)
 		}
 		fmt.Printf("%v", string(output))
@@ -127,7 +127,7 @@ func main() {
 
 	tempKubeConfig, err := ioutil.TempFile("", "")
 	if err != nil {
-		fmt.Printf("Could not create tempfile: %v", err)
+		fmt.Printf("Could not create tempfile: %v\n", err)
 		os.Exit(1)
 	}
 	defer os.Remove(tempKubeConfig.Name())
@@ -137,7 +137,7 @@ func main() {
 	if viper.GetString("file") == "" {
 		usr, err := user.Current()
 		if err != nil {
-			fmt.Printf("Could not determine current: %v", err)
+			fmt.Printf("Could not determine current: %v\n", err)
 			os.Exit(1)
 		}
 		kubeConfigPath = filepath.Join(usr.HomeDir, ".kube", "config")
@@ -150,7 +150,7 @@ func main() {
 	}
 	mergedConfig, err := loadingRules.Load()
 	if err != nil {
-		fmt.Printf("Could not merge configuration: %v", err)
+		fmt.Printf("Could not merge configuration: %v\n", err)
 		os.Exit(1)
 	}
 
