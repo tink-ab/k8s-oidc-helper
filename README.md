@@ -1,14 +1,14 @@
 # k8s-oidc-helper
 
 This is a small helper tool to get a user get authenticated with
-[Kubernetes OIDC](http://kubernetes.io/docs/admin/authentication/) using Any OpenID Connect Provider
+[Kubernetes OIDC](http://kubernetes.io/docs/admin/authentication/) using any OpenID Connect Provider
 as the Identity Provider.
 
 Given a ClientID, ClientSecret and Issuer URL, the tool will output the necessary
-configuration for `kubectl` that you can add to `~/.kube/config`
+configuration for `kubectl` that you can add to `~/.kube/config`.
 
-```
-$ k8s-oidc-helper -c ./client_secret.json   # Out of the Box Support for Google;s JSON File
+```bash
+$ k8s-oidc-helper -c ./client_secret.json
 Enter the code Google gave you: <code>
 
 # Add the following to your ~/.kube/config
@@ -27,7 +27,7 @@ users:
 
 To merge the new configuration into your existing kubectl config file, run:
 
-```
+```bash
 $ k8s-oidc-helper -c ./client_secret.json --write
 Enter the code Google gave you: <code>
 
@@ -42,19 +42,26 @@ $ kubectl config use-context <context-name>
 
 There is a bit of setup involved before you can use this tool.
 
+### Google OAuth Setup
+
 First, you'll need to create a project and OAuth 2.0 Credential in the Google
 Cloud Console. You can follow [this guide](https://developers.google.com/identity/sign-in/web/devconsole-project)
 on creating an application, but do *NOT* create a web application. You'll need
 to select "Other" as the Application Type. Once that is created, you can
 download the ClientID and ClientSecret as a JSON file for ease of use.
 
+### Other OAuth providers
+
+Setting up this project with other OAuth providers should similar to the Google setup guide above.
+
+### kube-apiserver Setup
 
 Second, your kube-apiserver will need the following flags on to use OpenID Connect.
 
 ```
 --oidc-issuer-url=https://accounts.google.com \
 --oidc-username-claim=email \
---oidc-client-id=<Your client ID>\
+--oidc-client-id=<Your client ID> \
 ```
 
 ### Role-Based Access Control
@@ -88,8 +95,9 @@ roleRef:
 
 ## Installation
 
-```
+```bash
 go get github.com/tink-ab/k8s-oidc-helper
+dep ensure
 ```
 
 ## Usage

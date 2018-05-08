@@ -33,3 +33,6 @@ _testmain.go
 
 # Ignore vim files
 *.swp
+
+# Vendored Go packages
+vendor/
